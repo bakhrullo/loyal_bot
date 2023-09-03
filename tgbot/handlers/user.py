@@ -1,9 +1,5 @@
 import asyncio
 
-import aiohttp
-import yarl
-import aiofiles
-
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -72,7 +68,7 @@ async def news(c: CallbackQuery, config: Config):
     if not len(res):
         return await c.answer("Yangiliklar yo'q ❌")
     for count, content in enumerate(res, start=1):
-        text += f"{count}) {content['name']}"
+        text += f"{count}) {content['name']}\n"
     await c.message.edit_text(text=text, reply_markup=constructor_kb(res))
     await News.get_news.set()
 
@@ -80,6 +76,7 @@ async def news(c: CallbackQuery, config: Config):
 async def get_news(c: CallbackQuery, config: Config):
     res = await get(f"{config.db.db_url}news/{c.data}")
     await c.message.delete()
+    print(res)
     await c.message.answer_photo(photo=res["photo"], caption=res["descr"], reply_markup=back_kb)
 
 
@@ -115,7 +112,8 @@ async def change_phone(c: CallbackQuery):
 async def get_change_phone(m: Message, config: Config):
     phone = m.contact.phone_number if m.content_type == "contact" else m.text
     await patch(f"{config.db.db_url}user/update/{m.from_user.id}", data={"phone": phone})
-    await m.answer("Raqamingiz o'zgartirildi ✅", reply_markup=menu_kb)
+    await m.answer("Raqamingiz o'zgartirildi ✅", reply_markup=remove_kb)
+    await m.answer("Bosh menu", reply_markup=menu_kb)
     await Menu.get_menu.set()
 
 
@@ -192,7 +190,7 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(comment, Text(equals="comment"), state=Menu.get_menu)
     dp.register_callback_query_handler(settings, Text(equals="settings"), state=Menu.get_menu)
     dp.register_callback_query_handler(change_phone, BackFilter(), state=Settings.get_type)
-    dp.register_callback_query_handler(get_comment, BackFilter(), state=Comment.get_comment)
+    dp.register_message_handler(get_comment, state=Comment.get_comment)
     dp.register_callback_query_handler(get_news, BackFilter(), state=News.get_news)
     dp.register_callback_query_handler(get_prod, BackFilter(), state=Prods.get_prod)
     dp.register_callback_query_handler(get_mm, BackFilter(), state=Prods.get_mm)

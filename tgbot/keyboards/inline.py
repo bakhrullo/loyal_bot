@@ -10,7 +10,7 @@ menu_kb = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton("Mahsulotla
                                                 InlineKeyboardButton("Mening bonuslarim 💰", callback_data="wallet"),
                                                 InlineKeyboardButton("Bonus kod 💸", callback_data="bonus"),
                                                 InlineKeyboardButton("Yangiliklar 🗣", callback_data="news"),
-                                                InlineKeyboardButton("Izoh qoldirish 💬", callback_data="feedback"),
+                                                InlineKeyboardButton("Izoh qoldirish 💬", callback_data="comment"),
                                                 InlineKeyboardButton("Sozlamalar ⚙️", callback_data="settings"))
 
 conf_kb = InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton("Tasdiqlash ✅", callback_data="confirm"),
